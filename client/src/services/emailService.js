@@ -1,5 +1,5 @@
 require('dotenv').config();
-import { result } from "lodash";
+import { attempt, reject, result } from "lodash";
 import nodemailer from "nodemailer";
 
 let sendSimpleEmail = async (dataSend) => {
@@ -62,7 +62,7 @@ async function main() {
     from: '"Hỏi dân IT " <oootui56@gmail.com', //sender address
     to: dataSend.reciverEmail, // list of receivers
     subject: "Thông tin đặt lịch khám bệnh", //Subject line
-    html: getBodyHTMLEmail(dataSend.language),
+    html: getBodyHTMLEmail(dataSend),
   });
 
 }
@@ -114,7 +114,75 @@ let getBodyHTMLEmail = (dataSend) => {
   return result;
 }
 
+let getBodyHTMLEmailRemedy = (dataSend) => {
+  let result = ''
+  if (dataSend.language === 'vi') {
+    result =
+      `
+        <h3>Xin chao ${dataSend.patientName}!</h3>
+        <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên Hỏi dân IT channel</p>
+        <p>Thông tin đơn thuốc/ hóa đơn được gửi trong file đính kèm.</p>        
+
+        <div>Xin chân thành cảm ơn</div>
+        
+    `
+
+  }
+  if (language === 'en') {
+    result =
+      `
+        <h3>Dear ${dataSend.patientName}!</h3>
+        <p>You received this email because you booked an online medical appointment on Ask People IT channel </p>        
+        <p>bla bla</p> 
+        <div>Sincerely thank</div>
+    `
+  }
+
+  return result;
+}
+
+
+let sendAttachment = async (dataSend) => {
+  return new Promise(async (resolve, reject) => {
+
+    try {
+      let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+          user: process.env.EMAIL_APP,
+          pass: process.env.EMAIL_APP_PASSWORD,
+        },
+      });
+
+      //send mail with defined transport object
+      let info = await transporter.sendMail({
+        from: `"Hoidan IT " <oootui56@gmail.com>`, //sender address
+        to: dataSend.reciverEmail, // list of services
+        subject: "Kết quả đặt lịch khám bệnh", // subject line    
+        html: getBodyHTMLEmailRemedy(dataSend),
+        attachments: [
+          { //encoded string as an attachment
+            filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.png`,
+            content: dataSend.imgBase64.split("base64,")[1],
+            encoding: 'base64'
+          }
+        ],
+      });
+
+      console.log('check infor send email:')
+      console.log(info)
+      resolve()
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
 
 module.exports = {
-  sendSimpleEmail: sendSimpleEmail
+  sendSimpleEmail: sendSimpleEmail,
+  sendAttachment: sendAttachment
 }

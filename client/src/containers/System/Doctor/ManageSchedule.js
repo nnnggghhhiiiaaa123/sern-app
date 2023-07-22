@@ -7,7 +7,7 @@ import * as actions from "../../../store/actions";
 import { CRUD_ACTIONS, LANGUAGES, dateFormat } from '../../../utils';
 import DatePicker from '../../../components/Input/DatePicker';
 import moment from 'moment';
-import formattedDate from '../../../components/Formating/formattedDate';
+import formattedDate from '../../../components/Formating/FormattedDate';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
 import { saveBulkScheduleDoctor } from '../../../services/userService';
@@ -111,7 +111,7 @@ class ManageSchedule extends Component {
             return;
         }
 
-        // let formattedDate = moment(currentDate).format(dateFormat.SEND_TO_SERVER);
+        // let formatedDate = moment(currentDate).format(dateFormat.SEND_TO_SERVER);
         // moment(currentDate).unix();
         let formatedDate = new Date(currentDate).getTime();
 
@@ -123,7 +123,7 @@ class ManageSchedule extends Component {
                     console.log('check schedule', schedule, index, selectedDoctor)
                     let object = {};
                     object.doctorId = selectedDoctor.value; // value: label
-                    object.date = formattedDate;
+                    object.date = formatedDate;
                     object.timeType = schedule.keyMap;
                     result.push(object);
                 })

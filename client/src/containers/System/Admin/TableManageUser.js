@@ -17,7 +17,7 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 // Finish!
 function handleEditorChange({ html, text }) {
-  console.log('handleEditorChange', html, text);
+    console.log('handleEditorChange', html, text);
 }
 
 class TableManageUser extends Component {
@@ -25,7 +25,7 @@ class TableManageUser extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          usersRedux: []  
+            usersRedux: []
         }
     }
 
@@ -34,7 +34,7 @@ class TableManageUser extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if(prevProps.listUsers != this.props.listUsers) {
+        if (prevProps.listUsers != this.props.listUsers) {
             this.setState({
                 usersRedux: this.props.listUsers
             })
@@ -42,14 +42,14 @@ class TableManageUser extends Component {
     }
 
     handleDeleteUser = (user) => {
-        this.props.deleteAUserRedux(user.id); 
+        this.props.deleteAUserRedux(user.id);
     }
 
     handleEditUser = (user) => {
         this.props.handleEditUserFromParentKey(user)
     }
     render() {
-         let arrUsers = this.state.usersRedux;
+        let arrUsers = this.state.usersRedux;
         return (
             <React.Fragment>
                 <table id="TableManageUser">
@@ -91,7 +91,7 @@ class TableManageUser extends Component {
                 <MdEditor style={{ height: '500px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
 
             </React.Fragment>
-                     
+
         );
     }
 
@@ -106,7 +106,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchUserRedux: () => dispatch(actions.fetchAllUsersStart()),
-        deleteAUserRedux : (id) => dispatch(actions.deleteAUser(id))
+        deleteAUserRedux: (id) => dispatch(actions.deleteAUser(id))
     };
 };
 

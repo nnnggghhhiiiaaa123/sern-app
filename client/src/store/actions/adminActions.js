@@ -2,7 +2,8 @@ import actionTypes from './actionTypes';
 import {
     getAllCodeService, createNewUserService, getAllUsers,
     deleteUserService, editUserService, getTopDoctorHomeService,
-    getAllDoctors, saveDetailDoctorService
+    getAllDoctors, saveDetailDoctorService,
+    getAllSpecialty, getAllClinic
 } from '../../services/userService';
 import { toast } from "react-toastify";
 import { ROW_SELECT_DISABLED } from 'react-bootstrap-table-next';
@@ -272,6 +273,37 @@ export const fetchAllScheduleTime = () => {
     }
 }
 
+export const getRequiredDoctorInfor = () => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_REQUIRED_DOCTOR_INFOR_START })
+
+            let resPrice = await getAllCodeService("PRICE");
+            let resPayment = await getAllCodeService("PAYMENT");
+            let resProvince = await getAllCodeService("PROVINCE");
+            let resSpecialty = await getAllSpecialty();
+
+            if (resPrice && resPrice.errCode === 0
+                && resPayment && resPayment.errCode === 0
+                && resProvince && resProvince.errCode === 0
+                && resSpecialty && resSpecialty.errCode === 0
+                && resClinic && resClinic.errCode === 0
+            ) {
+                let data = {
+                    resPrice: resPrice.data,
+                    resPayment: resPayment.data,
+                    resProvince: resProvince.data,
+                    resSpecialty: resSpecialty.data,
+                    resClinic: resClinic.data
+                }
+                dispatch(fetchRequiredDoctorInforSuccess(data))
+            }
+
+        } catch (e) {
+
+        }
+    }
+}
 export const saveDetailDoctors = (data) => {
     return async (dispatch, getState) => {
         try {
@@ -298,3 +330,12 @@ export const saveDetailDoctors = (data) => {
         }
     }
 }
+
+export const fetchRequiredDoctorInforSuccess = (allRequiredData) => ({
+    type: actionTypes.FETCH_REQUIRED_DOCTOR_INFOR_SUCCESS,
+    data: allRequiredData
+})
+
+export const fetchRequiredDoctorInforFailed = () => ({
+    type: actionTypes.FETCH_REQUIRED_DOCTOR_INFOR_FAILED
+})
